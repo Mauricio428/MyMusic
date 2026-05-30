@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:5000';
+const API_BASE = 'https://web-production-241e7.up.railway.app';
 
 let currentUrl = '';
 let progressTimer = null;
