@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>YT Sound</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrapper">
+  <div class="logo-wrap">
+    <span class="logo">YT<span class="accent">Sound</span></span>
+    <p class="tagline">Descarga música de YouTube · sin instalar nada</p>
+  </div>
+  <div class="card">
+    <div class="alert" id="alert"></div>
+    <p class="field-label">URL de YouTube</p>
+    <div class="input-row">
+      <input type="text" id="url-input" class="url-input"
+        placeholder="https://youtube.com/watch?v=..."
+        autocomplete="off" spellcheck="false"/>
+      <button class="btn" id="btn-fetch" onclick="fetchInfo()">Buscar</button>
+    </div>
+    <div class="preview" id="preview">
+      <div class="preview-inner">
+        <div class="thumb-wrap">
+          <img id="thumb" src="" alt="thumbnail"/>
+        </div>
+        <div class="preview-info">
+          <div class="preview-title" id="song-title"></div>
+          <div class="preview-sub" id="song-sub"></div>
+        </div>
+      </div>
+    </div>
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-head">
+        <span id="prog-label">Preparando...</span>
+        <span id="prog-pct">0%</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" id="bar-fill"></div>
+      </div>
+    </div>
+    <button class="btn-download" id="btn-download" onclick="startDownload()">
+      ⬇ Descargar MP3
+    </button>
+  </div>
+  <p class="footer">Solo uso personal · respeta los derechos de autor</p>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
