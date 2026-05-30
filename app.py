@@ -10,6 +10,7 @@ CORS(app)
 
 DOWNLOAD_FOLDER = tempfile.gettempdir()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+COOKIES_FILE = os.path.join(BASE_DIR, 'cookies.txt')
 
 def is_valid_youtube_url(url):
     pattern = r'(https?://)?(www\.)?(youtube\.com/watch\?v=|youtu\.be/)[\w-]+'
@@ -34,7 +35,11 @@ def get_info():
     if not url or not is_valid_youtube_url(url):
         return jsonify({'error': 'URL inválida'}), 400
     try:
-        ydl_opts = {'quiet': True, 'skip_download': True}
+        ydl_opts = {
+            'quiet': True,
+            'skip_download': True,
+            'cookiefile': COOKIES_FILE if os.path.exists(COOKIES_FILE) else None,
+        }
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
             return jsonify({
@@ -58,6 +63,7 @@ def download():
             'format': 'bestaudio/best',
             'outtmpl': output_template,
             'quiet': True,
+            'cookiefile': COOKIES_FILE if os.path.exists(COOKIES_FILE) else None,
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
@@ -77,6 +83,5 @@ def download():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
- import os
-port = int(os.environ.get('PORT', 5000))
-app.run(debug=False, port=port, host='0.0.0.0')
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=False, port=port, host='0.0.0.0')
