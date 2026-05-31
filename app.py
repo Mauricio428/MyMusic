@@ -63,6 +63,7 @@ def download():
             'format': 'bestaudio/best',
             'outtmpl': output_template,
             'quiet': True,
+            'ffmpeg_location': '/usr/bin/ffmpeg',
             'cookiefile': COOKIES_FILE if os.path.exists(COOKIES_FILE) else None,
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
