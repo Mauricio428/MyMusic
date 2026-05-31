@@ -4,6 +4,7 @@ import yt_dlp
 import os
 import re
 import tempfile
+import shutil
 
 app = Flask(__name__)
 CORS(app)
@@ -59,11 +60,14 @@ def download():
         return jsonify({'error': 'URL inválida'}), 400
     try:
         output_template = os.path.join(DOWNLOAD_FOLDER, '%(title)s.%(ext)s')
+
+        ffmpeg_path = shutil.which('ffmpeg')
+        ffmpeg_dir = os.path.dirname(ffmpeg_path) if ffmpeg_path else None
+
         ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': output_template,
             'quiet': True,
-            'ffmpeg_location': '/usr/bin/ffmpeg',
             'cookiefile': COOKIES_FILE if os.path.exists(COOKIES_FILE) else None,
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
@@ -71,6 +75,9 @@ def download():
                 'preferredquality': '192',
             }],
         }
+        if ffmpeg_dir:
+            ydl_opts['ffmpeg_location'] = ffmpeg_dir
+
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=True)
             title = info.get('title', 'audio')
