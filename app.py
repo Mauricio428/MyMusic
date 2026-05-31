@@ -5,6 +5,12 @@ import os
 import re
 import tempfile
 import shutil
+import imageio_ffmpeg
+
+# Configurar ffmpeg automáticamente
+ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
+ffmpeg_dir = os.path.dirname(ffmpeg_exe)
+os.environ["PATH"] += os.pathsep + ffmpeg_dir
 
 app = Flask(__name__)
 CORS(app)
@@ -41,6 +47,8 @@ def debug():
     return jsonify({
         'ffmpeg_which': ffmpeg,
         'ffprobe_which': ffprobe,
+        'ffmpeg_exe': ffmpeg_exe,
+        'ffmpeg_dir': ffmpeg_dir,
         'find_nix': out,
     })
 
@@ -76,13 +84,11 @@ def download():
     try:
         output_template = os.path.join(DOWNLOAD_FOLDER, '%(title)s.%(ext)s')
 
-        ffmpeg_path = shutil.which('ffmpeg')
-        ffmpeg_dir = os.path.dirname(ffmpeg_path) if ffmpeg_path else None
-
         ydl_opts = {
             'format': 'bestaudio/best',
             'outtmpl': output_template,
             'quiet': True,
+            'ffmpeg_location': ffmpeg_dir,
             'cookiefile': COOKIES_FILE if os.path.exists(COOKIES_FILE) else None,
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
@@ -90,8 +96,6 @@ def download():
                 'preferredquality': '192',
             }],
         }
-        if ffmpeg_dir:
-            ydl_opts['ffmpeg_location'] = ffmpeg_dir
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=True)
