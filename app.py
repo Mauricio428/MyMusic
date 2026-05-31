@@ -90,6 +90,23 @@ def download():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/debug')
+def debug():
+    import shutil, subprocess
+    ffmpeg = shutil.which('ffmpeg')
+    ffprobe = shutil.which('ffprobe')
+    try:
+        out = subprocess.check_output(['find', '/nix', '-name', 'ffmpeg'], stderr=subprocess.DEVNULL, timeout=5).decode()
+    except:
+        out = 'no encontrado en /nix'
+    return jsonify({
+        'ffmpeg_which': ffmpeg,
+        'ffprobe_which': ffprobe,
+        'find_nix': out,
+    })
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, port=port, host='0.0.0.0')
+
+    
